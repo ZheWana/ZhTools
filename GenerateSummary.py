@@ -74,6 +74,7 @@ else:
         introFlag -= 1
         dstfile.writelines(presl.content)
         presl = copy.copy(cursl)
+    dstfile.writelines(presl.content)
 
 srcfile.close()
 dstfile.close()
