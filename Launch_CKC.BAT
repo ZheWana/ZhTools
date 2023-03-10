@@ -1,9 +1,10 @@
 @REM "使用环境：Clion+Keil+CubeMX联合开发"
 @REM "脚本默认根路径：Clion项目根目录下(与MDK-ARM目录平级)"
+@REM "脚本功能：将工程文件夹拖入脚本文件中，自动打开Keil、Clion以及CubeMX"
 
 @echo off
 
-@REM 指定Clion、串口助手可执行文件路径
+@REM 指定Clion可执行文件路径
 set "ClionExecPath=E:\SoftWare\JetBrains\CLion 2022.1\bin\clion64.exe"
 set "current_dir=%1\"
 
