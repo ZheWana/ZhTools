@@ -1,16 +1,42 @@
 # 功能：
-# 生成VScode的C语言配置文件的settings.json
+# 生成VScode的C语言配置文件的settings.json：
+# 1.询问工作区编码
+# 2.若工作区内含有多个Keil工程，询问使用的工程，没有的话将预定义宏留空
+# 3.若所选工程内含有多个目标，询问使用的目标
+# 4.询问用户可能使用的编译器路径以及具体的可执行文件
 # 
 # 注意：
-# 功能涉及到文件内容读写，不排除读写过程出现bug导致文件内容丢失，所使用前请先备份文件
+# 脚本使用覆盖式生成，使用前请先备份原settings.json文件避免数据丢失
 
 import re
 import os
 
 # 保存配置项
 encoding = ""
+compilerPath = ""
 preDefines = []
 includePath = []
+
+# 将列表内容展示给用户并返回用户的选项
+def getUserChoice(items: list, discription: str):
+    print("-"*20 + "\nThere are", len(items), discription, ":")
+    for i, item in enumerate(items):
+        print(i, ":", item)
+    num = input("Please input a integer to select one:")
+
+    if num != "":
+        try:
+            if int(num) > len(items):
+                print("Wrong input, default to use 0.")
+                return 0
+            else:
+                return int(num)
+        except:
+            print("Wrong input, default to use 0.")
+            return 0
+    
+    return num
+
 
 # 询问工作区编码
 temp = input("Please set encoding for workspace(u for utf-8, g for gb2312, others will directly fill into the setting)")
@@ -36,27 +62,17 @@ if len(tarList) == 0:
 else:
     num = 0
     if len(tarList) > 1:
-        print("There are", len(tarList), "project files:")
-        for i in range(len(tarList)):
-            print(i, ":", tarList[i])
-        num = input("Please input a integer to select one:")
+        num = getUserChoice(tarList, "projects")
+        num = 0 if num == "" else num
 
-    try:
-        if int(num) > len(tarList):
-            num = 0
-            print("Wrong input, default to use 0.")
-    except:
-        print("Wrong input, default to use 0.")
-
-    mdkFilePath = tarList[int(num)]
+    mdkFilePath = tarList[num]
 
     # 查找工程文件中的目标，将目标和宏定义列表作为键值对生成字典
     tarList = {}
     with open(mdkFilePath, "r") as f:
         tar = ""
 
-        line = f.readline();
-        while line:
+        for line in f:
             target_matches = re.match(r'<TargetName>(.*)</TargetName>', line.strip())
             define_matches = re.match(r'<Define>(.*)</Define>', line.strip())
 
@@ -69,28 +85,11 @@ else:
                         tarList[tar] = re.split(",| ", define_matches.group(1).strip())
                     tar = ""
 
-            line = f.readline()
-
     # 若有多个目标，询问用户使用哪个
-    num = 0
-    if len(tarList) > 1:
-        print("There are", len(tarList), "targets:")
-        for i in range(len(tarList)):
-            print(i, ":", list(tarList.keys())[i])
-        num = input("Please input a integer to select one:")
-
-    try:
-        if int(num) > len(tarList):
-            num = 0
-            print("Wrong input, default to use 0.")
-    except:
-        print("Wrong input, default to use 0.")
+    num = getUserChoice(tarList, "targets")
 
 # 生成宏定义
-try:
-    tarList = tarList[list(tarList.keys())[int(num)]]
-except:
-    tarList = []
+tarList = [] if num == "" else tarList[list(tarList.keys())[num]]
 preDefines.append("\"C_Cpp.default.defines\": [\n")
 for define in tarList:
     preDefines.append("    \"" + define + "\",\n")
@@ -111,6 +110,20 @@ for path in tarList:
 includePath.append("    \"${workspaceFolder}/**\"\n")
 includePath.append("],\n")
 
+# 查找环境变量中可能的编译器路径(含有bin的路径)，让用户选择
+tarList = list(filter(lambda x: x.endswith("\\bin") or x.endswith("\\Bin"), os.environ.get("Path").split(";")))
+num = getUserChoice(tarList, "bin Pathes")
+if num != "":
+    # 筛选出所选路径中所有的可执行文件
+    for root, dirs, files in os.walk(tarList[num]):
+        tarList = list(filter(lambda x: x.endswith(".exe"), files))
+        num = getUserChoice(tarList, "programes")
+        if num != "":
+            compilerPath = os.path.join(root, tarList[num])
+        break
+if compilerPath != "":
+    compilerPath = "\"C_Cpp.default.compilerPath\": \"" + compilerPath.replace("\\", "/") + "\","
+
 # 创建并将编码、预定义宏、包含路径写入文件中
 if not os.path.exists("./.vscode"):
     os.makedirs("./.vscode")
@@ -118,8 +131,8 @@ with open("./.vscode/settings.json", "w+") as f:
     tab = "    "
     f.write("{\n")
     f.write(tab + encoding + "\n")
+    f.write(tab + compilerPath + "\n")
     f.writelines([tab + line for line in preDefines])
     f.writelines([tab + line for line in includePath])
     f.write("}\n")
 print("Generating Done.")
-
