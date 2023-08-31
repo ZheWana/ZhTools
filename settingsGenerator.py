@@ -57,10 +57,10 @@ for root, dirs, files in os.walk(".\\"):
             tarList.append(os.path.join(root, f))
 
 # 若有多个，让用户选一个
+num = ""
 if len(tarList) == 0:
     print("No MDK project, can`t generate defines.")
 else:
-    num = 0
     if len(tarList) > 1:
         num = getUserChoice(tarList, "projects")
         num = 0 if num == "" else num
