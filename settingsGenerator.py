@@ -63,7 +63,8 @@ if len(tarList) == 0:
 else:
     if len(tarList) > 1:
         num = getUserChoice(tarList, "projects")
-        num = 0 if num == "" else num
+    
+    num = 0 if num == "" else num
 
     mdkFilePath = tarList[num]
 
