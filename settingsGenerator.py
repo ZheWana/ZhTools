@@ -131,14 +131,18 @@ tarList = list(
         os.environ.get("Path").split(";"),
     )
 )
-num = getUserChoice(tarList, "bin Pathes")
+num = getUserChoice(tarList, "Pathes might be your compiler path(You need to choose where compiler is located)")
 if num != "":
     # 筛选出所选路径中所有的可执行文件
     for root, dirs, files in os.walk(tarList[num]):
         tarList = list(
-            filter(lambda x: "gcc" in x or "armcc" in x or "armclang" in x, files)
+            filter(
+                lambda x: ("gcc" in x or "armcc" in x or "armclang" in x)
+                and x.endswith(".exe"),
+                files,
+            )
         )
-        num = getUserChoice(tarList, "programes")
+        num = getUserChoice(tarList, "programes(You have to choose one as your compiler)")
         if num != "":
             compilerPath = os.path.join(root, tarList[num])
         break
@@ -147,7 +151,7 @@ if compilerPath != "":
         '"C_Cpp.default.compilerPath": "' + compilerPath.replace("\\", "/") + '",'
     )
 
-# 创建并将编码、预定义宏、包含路径写入文件中
+# 创建settings.json并将编码、预定义宏、包含路径写入文件中
 if not os.path.exists("./.vscode"):
     os.makedirs("./.vscode")
 with open("./.vscode/settings.json", "w+") as f:
