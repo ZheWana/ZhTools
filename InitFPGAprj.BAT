@@ -13,3 +13,7 @@ md src
 
 cd src
 type nul > top.v
+
+cd .. 
+cd sim
+type nul > sim.v
