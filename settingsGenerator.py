@@ -16,6 +16,7 @@ encoding = ""
 compilerPath = ""
 preDefines = []
 includePath = []
+currentPath = ""
 
 
 # 将列表内容展示给用户并返回用户的选项
@@ -49,6 +50,17 @@ def isCompilerPath(path: str):
     return False
 
 
+# 询问脚本运行路径
+temp = input("Please enter the script running path(press Enter for the script path):")
+if temp == "":
+    currentPath = ".\\"
+else:
+    if temp.startswith('"') and temp.endswith('"'):
+        temp = temp[1:-1]
+    currentPath = temp
+
+print(currentPath)
+
 # 询问工作区编码
 temp = input(
     "Please set encoding for workspace(u for utf-8, g for gb2312, others will directly fill into the setting)"
@@ -64,7 +76,7 @@ else:
 mdkFilePath = ""
 tarList = []
 
-for root, dirs, files in os.walk(".\\"):
+for root, dirs, files in os.walk(currentPath):
     for f in files:
         if f.endswith(".uvprojx") or f.endswith(".uvproj"):
             tarList.append(os.path.join(root, f))
@@ -131,7 +143,10 @@ tarList = list(
         os.environ.get("Path").split(";"),
     )
 )
-num = getUserChoice(tarList, "Pathes might be your compiler path(You need to choose where compiler is located)")
+num = getUserChoice(
+    tarList,
+    "Pathes might be your compiler path(You need to choose where compiler is located)",
+)
 if num != "":
     # 筛选出所选路径中所有的可执行文件
     for root, dirs, files in os.walk(tarList[num]):
@@ -142,7 +157,9 @@ if num != "":
                 files,
             )
         )
-        num = getUserChoice(tarList, "programes(You have to choose one as your compiler)")
+        num = getUserChoice(
+            tarList, "programes(You have to choose one as your compiler)"
+        )
         if num != "":
             compilerPath = os.path.join(root, tarList[num])
         break
