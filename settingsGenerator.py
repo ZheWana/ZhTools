@@ -168,6 +168,11 @@ if compilerPath != "":
         '"C_Cpp.default.compilerPath": "' + compilerPath.replace("\\", "/") + '",'
     )
 
+ccppExSettings = '"C_Cpp.errorSquiggles": "disabled",\n\
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [\n\
+    \t"clang-analyzer-*"\n\
+    ]\n'
+
 # 创建settings.json并将编码、预定义宏、包含路径写入文件中
 if not os.path.exists("./.vscode"):
     os.makedirs("./.vscode")
@@ -178,5 +183,8 @@ with open("./.vscode/settings.json", "w+") as f:
     f.write(tab + compilerPath + "\n")
     f.writelines([tab + line for line in preDefines])
     f.writelines([tab + line for line in includePath])
+    f.writelines(tab + ccppExSettings)
     f.write("}\n")
 print("Generating Done.")
+
+os.system("pause")
