@@ -90,6 +90,7 @@ else:
         code += "\t\t\tend\n"
         code += "\t\tend\n"
 
+    code += "\t\tdefault: next_state = cur_state;\n" # preventing latch
     code += "\tendcase\n"
     code += "end\n\n"
 
