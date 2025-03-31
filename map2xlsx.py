@@ -1,3 +1,11 @@
+# 功能：
+# 将Keil生成的map文件中sizeinfo信息转化为excel表格，方便查询和排序
+
+# 以下三种方式任意均可
+# 1.直接将map文件作为参数传入脚本
+# 2.将含有map文件的文件夹作为参数传入脚本（会自动搜索所有的map文件）
+# 3.不传参数，默认在脚本执行路径及其子文件夹中找map文件
+
 import re
 import sys
 import openpyxl
