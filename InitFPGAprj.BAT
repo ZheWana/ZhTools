@@ -1,7 +1,11 @@
 @echo off
+set /p projectPath="Input the path of the FPGA project:"
+if "%projectPath%"=="" (
+    set projectPath=.
+)
 set /p projectName="Input the name of the FPGA project:"
-md %projectName%
-cd %projectName%
+md "%projectPath%\%projectName%"
+cd "%projectPath%\%projectName%"
 
 echo prj/** > .gitignore
 md prj
