@@ -6,6 +6,13 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+rem 安装 Nuitka
+pip install Nuitka
+if %errorlevel% neq 0 (
+    echo 安装 Nuitka 失败，请检查网络或权限。
+    exit /b 1
+)
+
 rem 使用 pipreqs 生成 requirements.txt 文件
 pipreqs . --force
 if %errorlevel% neq 0 (
