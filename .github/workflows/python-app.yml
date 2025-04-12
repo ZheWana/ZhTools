@@ -28,7 +28,8 @@ jobs:
         python-version: "3.12"
     - name: Install dependencies and build all
       run: |
-        elf2disScript.bat
+        ls
+        ./elf2disScript.bat
     - name: Push all files to master branch
       run: |
         git config --global user.email "${MYEMAIL}"
