@@ -78,17 +78,14 @@ else:
     code += "always @(*) begin\n"
     code += "\tcase (cur_state)\n"
     for i,name in enumerate(state_name):
-        code += "\t\t" + name + " : begin\n\t\t\t"
+        code += "\t\t" + name + " :\n\t\t\t"
         for transfer in transfer_list:
             if i == int(transfer[0]) - 1:
                 variable_name = "transcondition_" + state_name[int(transfer[0]) - 1] + "_to_" + state_name[int(transfer[1]) - 1]
-                code += "if (cur_state == "+ state_name[int(transfer[0]) - 1] + " && " + variable_name +") begin\n"
+                code += f"if ({variable_name})\n"
                 code += "\t\t\t\tnext_state = " + state_name[int(transfer[1]) - 1] + ";\n"
-                code += "\t\t\tend else "
-        code += "begin\n"
+                code += "\t\t\telse "
         code += "\t\t\t\tnext_state = cur_state;\n"
-        code += "\t\t\tend\n"
-        code += "\t\tend\n"
 
     code += "\t\tdefault: next_state = cur_state;\n" # preventing latch
     code += "\tendcase\n"
