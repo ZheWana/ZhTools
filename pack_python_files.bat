@@ -39,24 +39,12 @@ if not exist build (
 rem 遍历当前目录下的所有 Python 文件并使用 nuitka 打包
 for %%f in (*.py) do (
     echo //-----------------------------
-    python -m nuitka --standalone --onefile --remove-output --mingw64 "%%f" --jobs=16
+    python -m nuitka --standalone --output-dir=build --onefile --remove-output --mingw64 "%%f" --jobs=16
     if %errorlevel% neq 0 (
         echo "%%f" 打包失败。
         continue
     )
     echo "%%f" 打包完成。
-
-    rem 获取不带扩展名的文件名
-    set "filename=%%~nf"
-    setlocal enabledelayedexpansion
-    rem 复制生成的可执行文件到 build 目录
-    move "!filename!.exe" build\
-    if %errorlevel% neq 0 (
-        echo "!filename!.exe" 移动到 build 目录失败。
-    ) else (
-        echo "!filename!.exe" 已移动到 build 目录。
-    )
-    endlocal
     echo //-----------------------------
 )
-echo 所有 Python 文件打包完成，可执行文件已尝试移动到 build 目录。    
+echo 所有 Python 文件打包完成
