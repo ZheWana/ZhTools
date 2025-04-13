@@ -1,3 +1,4 @@
+@echo off
 rem 安装 pipreqs
 pip install pipreqs
 if %errorlevel% neq 0 (
