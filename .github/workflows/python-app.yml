@@ -30,6 +30,7 @@ jobs:
       run: |
         ls
         ./pack_python_files.bat
+        ls
     - name: Push all files to master branch
       run: |
         git config --global user.email "${MYEMAIL}"

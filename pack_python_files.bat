@@ -1,4 +1,3 @@
-@echo off
 rem 安装 pipreqs
 pip install pipreqs
 if %errorlevel% neq 0 (
@@ -38,6 +37,7 @@ if not exist build (
 
 rem 遍历当前目录下的所有 Python 文件并使用 nuitka 打包
 for %%f in (*.py) do (
+    echo //-----------------------------
     python -m nuitka --standalone --onefile --remove-output --mingw64 "%%f" --jobs=16
     if %errorlevel% neq 0 (
         echo "%%f" 打包失败。
@@ -56,5 +56,6 @@ for %%f in (*.py) do (
         echo "!filename!.exe" 已移动到 build 目录。
     )
     endlocal
+    echo //-----------------------------
 )
 echo 所有 Python 文件打包完成，可执行文件已尝试移动到 build 目录。    
