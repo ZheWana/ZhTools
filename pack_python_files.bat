@@ -7,7 +7,7 @@ if %errorlevel% neq 0 (
 )
 
 rem 安装 Nuitka
-pip install Nuitka
+pip install Nuitka==2.0.6
 if %errorlevel% neq 0 (
     echo 安装 Nuitka 失败，请检查网络或权限。
     exit /b 1
